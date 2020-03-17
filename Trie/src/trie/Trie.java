@@ -25,61 +25,74 @@ public class Trie {
 	private static void addToLocation(String[] allWords, int arrayIndex, String thisString, TrieNode leftmost )
 	{
 		TrieNode ptr = leftmost;
-		
+		TrieNode prev = ptr;
+		String fullString = allWords[arrayIndex];
 		while(ptr!= null)									//keeping toing to the right
 		{
 			
 			String currnetString = allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex,ptr.substr.endIndex+1);
+
+			System.out.println(currnetString);
 			int commonLength = amountOfSameLetter(currnetString, thisString);
-			
-			System.out.println(commonLength);
 			
 			
 			if( commonLength > 0 )						// go down if it can
 			{
 				if( ptr.firstChild != null)					// have child
 				{
-					System.out.println("have child");
+//					System.out.println("have child");
+					
+					TrieNode curr = ptr.firstChild.sibling;
+					while(curr.sibling != null)
+					{
+						curr.firstChild.sibling.substr.endIndex = (short)Math.min(curr.firstChild.sibling.substr.endIndex,  (curr.firstChild.sibling.substr.startIndex + commonLength)  );
+					}
+					
 					addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild); 	//add to the new sibling
+					return;
 				}
 				else										// no child
 				{
-					System.out.println("no child");
+//					System.out.println("no child");
 					
-					Indexes indexForFirstChild = ptr.substr;
+					//--------------------building first child----------------------------
+					Indexes firstChildIndex = new Indexes(ptr.substr.wordIndex,(short)(ptr.substr.startIndex + commonLength) ,ptr.substr.endIndex);
+					ptr.firstChild = new TrieNode( firstChildIndex, null,null );
+//					System.out.println("parent's second half index:  " + ptr.firstChild.toString()) ;	//test
+					//--------------------------------------------------------------------
 					
-					ptr.substr.endIndex = (short) (ptr.substr.startIndex + commonLength-1);		//shorten the parents
 					
-					indexForFirstChild.startIndex = (short)(indexForFirstChild.startIndex + commonLength);
+					//--------------------shorten the parent----------------------------
+					ptr.substr.endIndex = (short) (ptr.substr.startIndex + commonLength-1);
+//					System.out.println("parent index:  " + ptr.toString()) ;
+					//------------------------------------------------------------------
 					
-					ptr.firstChild = new TrieNode( 												//second half of the parent
-							indexForFirstChild,
-							null, 
-							null
-							);
 					
+					//--------------------build first child's sibling----------------------------
 					ptr.firstChild.sibling = new TrieNode(
 							new Indexes( 
-									(short)(short)(indexForFirstChild.startIndex + commonLength),
-									(short)0,
-									(short)(thisString.length()-1) ),
+									(short)arrayIndex,
+									(short)(short)(ptr.substr.startIndex + commonLength),
+									(short)(fullString.length()-1) ),
 							null, 
 							null);
-					
+//					System.out.println("new child index:  " + ptr.firstChild.sibling.toString());
+					//----------------------------------------------------------------------------
+					return;
 				}
 			
 			}
+			prev = ptr;
 			ptr = ptr.sibling;
 		}
 		
-		ptr = new TrieNode( 				// u dont fit
+		prev.sibling = new TrieNode( 				//  dont fit
 				new Indexes( 
 						(short)arrayIndex,
 						(short)0,
-						(short)(thisString.length()-1) ),
+						(short)(fullString.length()-1) ),
 				null, 
 				null);
-		return;
 	}
 	
 	
@@ -131,10 +144,17 @@ public class Trie {
 	 */
 	public static ArrayList<TrieNode> completionList(TrieNode root, String[] allWords, String prefix) 
 	{
-		
-		
-		
-		
+		if(root.firstChild != null)
+		{
+			TrieNode ptr = root.firstChild;
+			while(ptr.sibling != null)
+			{
+				
+				
+				
+				ptr = ptr.sibling;
+			}
+		}
 		
 		
 		return null;
