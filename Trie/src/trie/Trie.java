@@ -24,11 +24,13 @@ public class Trie {
 	
 	private static void addToLocation(String[] allWords, int arrayIndex, String thisString, TrieNode leftmost )
 	{
+		System.out.println(thisString);
 		TrieNode ptr = leftmost;
 		TrieNode prev = ptr;
 		String fullString = allWords[arrayIndex];
-		while(ptr!= null)									//keeping toing to the right
+		while(ptr!= null)									//keeping going to the right
 		{
+			System.out.println(ptr.substr.toString());
 			
 			String currnetString = allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex,ptr.substr.endIndex+1);
 
@@ -39,12 +41,15 @@ public class Trie {
 			{
 				if( ptr.firstChild != null)					// have child
 				{
-//					System.out.println("have child");
+					System.out.println("have child");
 					
 					TrieNode curr = ptr.firstChild.sibling;
 					while(curr.sibling != null)
 					{
-						curr.firstChild.sibling.substr.endIndex = (short)Math.min(curr.firstChild.sibling.substr.endIndex,  (curr.firstChild.sibling.substr.startIndex + commonLength)  );
+						
+						curr.sibling.substr.startIndex = (short)Math.min(curr.sibling.substr.endIndex,  (curr.sibling.substr.startIndex + commonLength)  );
+						curr = curr.sibling;
+						
 					}
 					
 					addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild); 	//add to the new sibling
@@ -52,7 +57,7 @@ public class Trie {
 				}
 				else										// no child
 				{
-//					System.out.println("no child");
+					System.out.println("no child");
 					
 					//--------------------building first child----------------------------
 					Indexes firstChildIndex = new Indexes(ptr.substr.wordIndex,(short)(ptr.substr.startIndex + commonLength) ,ptr.substr.endIndex);
@@ -75,7 +80,7 @@ public class Trie {
 									(short)(fullString.length()-1) ),
 							null, 
 							null);
-//					System.out.println("new child index:  " + ptr.firstChild.sibling.toString());
+					System.out.println("new child index:  " + ptr.firstChild.sibling.toString());
 					//----------------------------------------------------------------------------
 					return;
 				}

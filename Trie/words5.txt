@@ -1,5 +1,7 @@
-4
-a
-b
-c
-d
+6
+bode
+bread
+bastion
+bad
+boon
+bristle
