@@ -32,7 +32,6 @@ public class Trie {
 			
 			String currnetString = allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex,ptr.substr.endIndex+1);
 
-			System.out.println(currnetString);
 			int commonLength = amountOfSameLetter(currnetString, thisString);
 			
 			
@@ -144,20 +143,35 @@ public class Trie {
 	 */
 	public static ArrayList<TrieNode> completionList(TrieNode root, String[] allWords, String prefix) 
 	{
+		ArrayList<TrieNode> returnArray = new ArrayList<TrieNode>();
 		if(root.firstChild != null)
 		{
-			TrieNode ptr = root.firstChild;
-			while(ptr.sibling != null)
+			TrieNode ptr = root.firstChild;		//next layer 
+			while(ptr != null)
 			{
 				
+				int 	arrayIndex = ptr.substr.wordIndex;
+				String stringBeingChecked = allWords[arrayIndex].substring(0,ptr.substr.endIndex+1);
+				int amount = amountOfSameLetter(stringBeingChecked, prefix);
+				
+				
+				if(amount == stringBeingChecked.length() || amount == prefix.length()	)			// it should go down?
+				{					
+					if(ptr.firstChild == null)
+						returnArray.add(ptr);
+					else
+						{
+							ArrayList<TrieNode> recursBacked = completionList( ptr, allWords, prefix);
+							for(int i = 0; i < recursBacked.size(); i++)
+								returnArray.add(recursBacked.get(i));
+						}
+				}
 				
 				
 				ptr = ptr.sibling;
 			}
 		}
-		
-		
-		return null;
+		return returnArray;
 	}
 	
 	public static void print(TrieNode root, String[] allWords) {
