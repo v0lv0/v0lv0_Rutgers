@@ -39,14 +39,17 @@ public class Trie {
 			
 			if( commonLength > 0 )						// go down if it can
 			{
+				System.out.println("3");
 				if( ptr.firstChild != null)					// have child
 				{
+					System.out.println("2");
 					if (commonLength == currnetString.length())
 					{
+						System.out.println("1");
 						TrieNode curr = ptr.firstChild.sibling;
 						while(curr.sibling != null)
 						{
-							curr.sibling.substr.startIndex = (short) Math.min(curr.sibling.substr.endIndex,  curr.sibling.substr.startIndex + commonLength );
+							curr.substr.startIndex = (short) Math.min(curr.sibling.substr.endIndex,  curr.sibling.substr.startIndex + commonLength );
 							curr = curr.sibling;
 						}
 						
@@ -67,7 +70,7 @@ public class Trie {
 						ptr.firstChild = tNode;
 						ptr.substr.endIndex = (short)(ptr.substr.startIndex + commonLength-1);
 						
-						addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild);
+						addToLocation(allWords, arrayIndex, thisString.substring(commonLength), tNode);
 						return;
 					}
 				}
@@ -95,12 +98,11 @@ public class Trie {
 					//----------------------------------------------------------------------------
 					return;
 				}
-			
 			}
 			prev = ptr;
 			ptr = ptr.sibling;
 		}
-		
+		System.out.println(fullString.indexOf(thisString)+ "&&&&&&&&&&&");
 		prev.sibling = new TrieNode( 				//  dont fit
 				new Indexes( 
 						(short)arrayIndex,
@@ -108,6 +110,7 @@ public class Trie {
 						(short)(fullString.length()-1) ),
 				null, 
 				null);
+		System.out.println(prev.sibling.toString()+ "&&&&&&&&&&&");
 	}
 	
 	
@@ -135,9 +138,7 @@ public class Trie {
 		}
 		return root;
 	}
-	
-	
-	
+		
 	
 	/**
 	 * Given a trie, returns the "completion list" for a prefix, i.e. all the leaf nodes in the 
