@@ -41,34 +41,46 @@ public class Trie {
 			{
 				if( ptr.firstChild != null)					// have child
 				{
-					System.out.println("have child");
-					
-					TrieNode curr = ptr.firstChild.sibling;
-					while(curr.sibling != null)
+					if (commonLength == currnetString.length())
 					{
+						TrieNode curr = ptr.firstChild.sibling;
+						while(curr.sibling != null)
+						{
+							curr.sibling.substr.startIndex = (short) Math.min(curr.sibling.substr.endIndex,  curr.sibling.substr.startIndex + commonLength );
+							curr = curr.sibling;
+						}
 						
-						curr.sibling.substr.startIndex = (short)Math.min(curr.sibling.substr.endIndex,  (curr.sibling.substr.startIndex + commonLength)  );
-						curr = curr.sibling;
-						
+						addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild); 	//add to the new sibling
+						return;
 					}
-					
-					addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild); 	//add to the new sibling
-					return;
+					else
+					{
+						System.out.println("did it work?");
+						System.out.print(commonLength+ "****");	
+						System.out.println(allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex, ptr.substr.endIndex+1).length()+ "****");
+						
+						
+						
+						Indexes t = new Indexes(ptr.substr.wordIndex, ptr.substr.startIndex, ptr.substr.endIndex);
+						t.startIndex = (short)(commonLength);
+						TrieNode tNode = new TrieNode( t, ptr.firstChild, null );		//build the t node
+						ptr.firstChild = tNode;
+						ptr.substr.endIndex = (short)(ptr.substr.startIndex + commonLength-1);
+						
+						addToLocation(allWords, arrayIndex, thisString.substring(commonLength), ptr.firstChild);
+						return;
+					}
 				}
 				else										// no child
 				{
-					System.out.println("no child");
-					
 					//--------------------building first child----------------------------
 					Indexes firstChildIndex = new Indexes(ptr.substr.wordIndex,(short)(ptr.substr.startIndex + commonLength) ,ptr.substr.endIndex);
 					ptr.firstChild = new TrieNode( firstChildIndex, null,null );
-//					System.out.println("parent's second half index:  " + ptr.firstChild.toString()) ;	//test
 					//--------------------------------------------------------------------
 					
 					
 					//--------------------shorten the parent----------------------------
 					ptr.substr.endIndex = (short) (ptr.substr.startIndex + commonLength-1);
-//					System.out.println("parent index:  " + ptr.toString()) ;
 					//------------------------------------------------------------------
 					
 					
@@ -80,7 +92,6 @@ public class Trie {
 									(short)(fullString.length()-1) ),
 							null, 
 							null);
-					System.out.println("new child index:  " + ptr.firstChild.sibling.toString());
 					//----------------------------------------------------------------------------
 					return;
 				}
@@ -93,7 +104,7 @@ public class Trie {
 		prev.sibling = new TrieNode( 				//  dont fit
 				new Indexes( 
 						(short)arrayIndex,
-						(short)0,
+						(short)fullString.indexOf(thisString),
 						(short)(fullString.length()-1) ),
 				null, 
 				null);

@@ -1,7 +1,3 @@
-6
-bode
-bread
-bastion
-bad
-boon
-bristle
+2
+absence
+analysis
