@@ -24,14 +24,11 @@ public class Trie {
 	
 	private static void addToLocation(String[] allWords, int arrayIndex, String thisString, TrieNode leftmost )
 	{
-		System.out.println(thisString);
 		TrieNode ptr = leftmost;
 		TrieNode prev = ptr;
 		String fullString = allWords[arrayIndex];
 		while(ptr!= null)									//keeping going to the right
 		{
-			System.out.println(ptr.substr.toString());
-			
 			String currnetString = allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex,ptr.substr.endIndex+1);
 
 			int commonLength = amountOfSameLetter(currnetString, thisString);
@@ -39,13 +36,10 @@ public class Trie {
 			
 			if( commonLength > 0 )						// go down if it can
 			{
-				System.out.println("3");
 				if( ptr.firstChild != null)					// have child
 				{
-					System.out.println("2");
 					if (commonLength == currnetString.length())
 					{
-						System.out.println("1");
 						TrieNode curr = ptr.firstChild.sibling;
 						while(curr.sibling != null)
 						{
@@ -58,12 +52,6 @@ public class Trie {
 					}
 					else
 					{
-						System.out.println("did it work?");
-						System.out.print(commonLength+ "****");	
-						System.out.println(allWords[ptr.substr.wordIndex].substring(ptr.substr.startIndex, ptr.substr.endIndex+1).length()+ "****");
-						
-						
-						
 						Indexes t = new Indexes(ptr.substr.wordIndex, ptr.substr.startIndex, ptr.substr.endIndex);
 						t.startIndex = (short)(commonLength);
 						TrieNode tNode = new TrieNode( t, ptr.firstChild, null );		//build the t node
@@ -102,7 +90,6 @@ public class Trie {
 			prev = ptr;
 			ptr = ptr.sibling;
 		}
-		System.out.println(fullString.indexOf(thisString)+ "&&&&&&&&&&&");
 		prev.sibling = new TrieNode( 				//  dont fit
 				new Indexes( 
 						(short)arrayIndex,
@@ -110,7 +97,6 @@ public class Trie {
 						(short)(fullString.length()-1) ),
 				null, 
 				null);
-		System.out.println(prev.sibling.toString()+ "&&&&&&&&&&&");
 	}
 	
 	
@@ -183,8 +169,6 @@ public class Trie {
 								returnArray.add(recursBacked.get(i));
 						}
 				}
-				
-				
 				ptr = ptr.sibling;
 			}
 		}
