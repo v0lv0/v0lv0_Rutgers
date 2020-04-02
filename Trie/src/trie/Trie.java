@@ -125,7 +125,6 @@ public class Trie {
 		return root;
 	}
 		
-	
 	/**
 	 * Given a trie, returns the "completion list" for a prefix, i.e. all the leaf nodes in the 
 	 * trie whose words start with this prefix. 	
@@ -150,6 +149,7 @@ public class Trie {
 		if(root.firstChild != null)
 		{
 			TrieNode ptr = root.firstChild;		//next layer 
+			
 			while(ptr != null)
 			{
 				
@@ -157,23 +157,36 @@ public class Trie {
 				String stringBeingChecked = allWords[arrayIndex].substring(0,ptr.substr.endIndex+1);
 				int amount = amountOfSameLetter(stringBeingChecked, prefix);
 				
+//				System.out.println(stringBeingChecked);
 				
-				if(amount == stringBeingChecked.length() || amount == prefix.length()	)			// it should go down?
+				if((amount == stringBeingChecked.length() || amount == prefix.length()) &&amount!=0)			// it should go down?
 				{					
 					if(ptr.firstChild == null)
+					{
+						if(prefix.length() > (ptr.substr.endIndex +1) )
+							return null;
 						returnArray.add(ptr);
+					}
 					else
-						{
-							ArrayList<TrieNode> recursBacked = completionList( ptr, allWords, prefix);
-							for(int i = 0; i < recursBacked.size(); i++)
-								returnArray.add(recursBacked.get(i));
-						}
+					{
+						ArrayList<TrieNode> recursBacked = completionList( ptr, allWords, prefix);
+						if (recursBacked == null || recursBacked.size() == 0)
+							return null;
+						for(int i = 0; i < recursBacked.size(); i++)
+							returnArray.add(recursBacked.get(i));
+					}
 				}
+				
+				if((ptr.sibling == null) && (returnArray.size() == 0))
+					return null;
 				ptr = ptr.sibling;
 			}
 		}
 		return returnArray;
 	}
+	
+	
+	
 	
 	public static void print(TrieNode root, String[] allWords) {
 		System.out.println("\nTRIE\n");
