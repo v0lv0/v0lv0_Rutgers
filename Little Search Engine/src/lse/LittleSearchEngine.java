@@ -9,7 +9,6 @@ import java.util.*;
  *
  */
 public class LittleSearchEngine {
-	
 	/**
 	 * This is a hash table of all keywords. The key is the actual keyword, and the associated value is
 	 * an array list of all occurrences of the keyword in documents. The array list is maintained in 
@@ -46,23 +45,29 @@ public class LittleSearchEngine {
 		if(docFile == null)
 			return null;
 		
-		File doc = new File(docFile);
-		Scanner scanner = new Scanner(doc);
+		
+		Scanner scanner = new Scanner(new File(docFile));
 		HashMap<String, Occurrence> returnMap = new HashMap<String, Occurrence>();
 		
-		if(scanner.hasNext())
+		while(scanner.hasNext())
 		{
-			String cur = getKeyword(scanner.next());
-			if( returnMap.containsKey(cur) )
-				returnMap.put(cur, new Occurrence(docFile,returnMap.get(cur).frequency++));
-			else
-				returnMap.put(cur, new Occurrence(docFile, 1));
+			String cur = scanner.next();
+			
+			cur = getKeyword(cur);
+			if(cur != null)
+			{
+				cur = cur.toLowerCase();
+				if( returnMap.containsKey(cur) )
+					returnMap.get(cur).frequency++;
+				else
+					returnMap.put(cur, new Occurrence(docFile, 1));
+			}
 		}
 		scanner.close();
 		return returnMap;
 	}
-	
-	//not complete
+
+	//complete
 	/**
 	 * Merges the keywords for a single document into the master keywordsIndex
 	 * hash table. For each keyword, its Occurrence in the current document
@@ -74,7 +79,20 @@ public class LittleSearchEngine {
 	 */
 	public void mergeKeywords(HashMap<String,Occurrence> kws) 
 	{
-		/** COMPLETE THIS METHOD **/
+		for( String currentKey : kws.keySet())
+		{
+			if(keywordsIndex.containsKey(currentKey))
+			{
+				keywordsIndex.get(currentKey).add( kws.get(currentKey) );
+				insertLastOccurrence( keywordsIndex.get(currentKey) );
+			}
+			else
+			{
+				ArrayList<Occurrence> smallList= new ArrayList<Occurrence>();
+				smallList.add( kws.get(currentKey) );
+				keywordsIndex.put(currentKey,smallList);
+			}
+		}
 	}
 	
 	//complete
@@ -108,7 +126,7 @@ public class LittleSearchEngine {
 		{
 			if(Character.isAlphabetic(input.charAt(i)))
 			{
-				do{i++;} while(Character.isAlphabetic(input.charAt(i)));
+				do{i++;} while(  i < input.length() && Character.isAlphabetic(input.charAt(i)) );
 				
 				while(i<input.length() && !Character.isAlphabetic(input.charAt(i)))
 					i++;
@@ -117,7 +135,7 @@ public class LittleSearchEngine {
 					return null;
 			}
 		}
-		String returnString = input.replaceAll("[^a-zA-Z]", "");
+		String returnString = input.replaceAll("[^a-zA-Z]", "").toLowerCase();
 		if( noiseWords.contains(returnString) )
 			return null;
 		return returnString;
@@ -137,27 +155,79 @@ public class LittleSearchEngine {
 	 */
 	public ArrayList<Integer> insertLastOccurrence(ArrayList<Occurrence> occs) 
 	{
-		int right = occs.size()-2;
-		int left  = 0;
-		int frequency = occs.get(occs.size()).frequency;
-		int mid = 0;
 		ArrayList<Integer> testArray= new ArrayList<Integer>();
-		
-		while(left<=right)
+		if(occs.size() > 1)
 		{
-			mid = (left+right)/2;
-			testArray.add(mid);
-			if(frequency > occs.get(mid).frequency)
-				left = mid+1;
-			if(frequency < occs.get(mid).frequency)
-				right = mid-1;
-			if(frequency == occs.get(mid).frequency)
-				break;
+			{
+				int right = occs.size()-2;
+				int left  = 0;
+				int frequency = occs.get(occs.size()-1).frequency;
+				int mid =(left+right)/2;
+				while(left<=right)
+				{
+					mid = (left+right)/2;
+					testArray.add(mid);
+					if(frequency < occs.get(mid).frequency)
+						left = mid+1;
+					if(frequency > occs.get(mid).frequency)
+						right = mid-1;
+					if(frequency == occs.get(mid).frequency)
+						break;
+				}
+				if( occs.get(mid).frequency < occs.get(occs.size()-1).frequency )
+				{
+					occs.add( mid, occs.get(occs.size()-1 ));
+					occs.remove(occs.size()-1);
+				}
+				else
+				{
+					occs.add( mid+1, occs.get(occs.size()-1 ));
+					occs.remove(occs.size()-1);
+				}
+			}
 		}
-		occs.add(mid,occs.get(occs.size()));
 		return testArray;
 	}
 	
+	/*
+	public ArrayList<Integer> insertLastOccurrences(ArrayList<Integer> occs) 
+	{
+		ArrayList<Integer> testArray= new ArrayList<Integer>();
+		if(occs.size() > 1)
+		{
+			{
+				int right = occs.size()-2;
+				int left  = 0;
+				int frequency = occs.get(occs.size()-1);
+				int mid =(left+right)/2;
+				while(left<=right)
+				{
+					mid = (left+right)/2;
+					testArray.add(mid);
+					if(frequency < occs.get(mid))
+						left = mid+1;
+					if(frequency > occs.get(mid))
+						right = mid-1;
+					if(frequency == occs.get(mid))
+						break;
+				}
+				if( occs.get(mid) < occs.get(occs.size()-1 ) )
+				{
+					occs.add( mid, occs.get(occs.size()-1 ));
+					occs.remove(occs.size()-1);
+				}
+				else
+				{
+					occs.add( mid+1, occs.get(occs.size()-1 ));
+					occs.remove(occs.size()-1);
+				}
+			}
+		}
+		return testArray;
+	}
+	*/
+	
+	//complete defalt
 	/**
 	 * This method indexes all keywords found in all the input documents. When this
 	 * method is done, the keywordsIndex hash table will be filled with all keywords,
@@ -179,7 +249,8 @@ public class LittleSearchEngine {
 		
 		// index all keywords
 		sc = new Scanner(new File(docsFile));
-		while (sc.hasNext()) {
+		while (sc.hasNext()) 
+		{
 			String docFile = sc.next();
 			HashMap<String,Occurrence> kws = loadKeywordsFromDocument(docFile);
 			mergeKeywords(kws);
@@ -187,6 +258,7 @@ public class LittleSearchEngine {
 		sc.close();
 	}
 	
+	//complete
 	/**
 	 * Search result for "kw1 or kw2". A document is in the result set if kw1 or kw2 occurs in that
 	 * document. Result set is arranged in descending order of document frequencies. 
@@ -207,12 +279,116 @@ public class LittleSearchEngine {
 	 *         frequencies. The result size is limited to 5 documents. If there are no matches, 
 	 *         returns null or empty array list.
 	 */
-	public ArrayList<String> top5search(String kw1, String kw2) {
-		/** COMPLETE THIS METHOD **/
+	public ArrayList<String> top5search(String kw1, String kw2) 
+	{
+		kw1 = kw1.toLowerCase();
+		kw2 = kw2.toLowerCase();
 		
-		// following line is a placeholder to make the program compile
-		// you should modify it as needed when you write your code
-		return null;
-	
+		ArrayList<Occurrence> ArrayList1    = new ArrayList<Occurrence>();		
+		ArrayList<Occurrence> ArrayList2    = new ArrayList<Occurrence>();
+		ArrayList<String> topFiveString = new ArrayList<String>();
+		
+		boolean occKW1 = keywordsIndex.containsKey(kw1);
+		boolean occKW2 = keywordsIndex.containsKey(kw2);
+		
+		if((!occKW1)&&(!occKW2))
+			return null;
+		
+		if(occKW1)
+		{
+			ArrayList1 = keywordsIndex.get(kw1);
+			if(occKW2)													//in both
+			{
+				ArrayList2 = keywordsIndex.get(kw2);
+				
+				
+
+//				for(int i = 0; i<ArrayList1.size(); i++)
+//					System.out.println(ArrayList1.get(i).frequency + " " + ArrayList1.get(i).document);
+//				System.out.println("*******************");
+//				
+//				for(int i = 0; i<ArrayList2.size(); i++)
+//					System.out.println(ArrayList2.get(i).frequency + " " + ArrayList2.get(i).document);
+//				System.out.println("*******************");
+				
+				int i=0, j=0;
+				while( topFiveString.size()<5  )
+				{
+					if(ArrayList1.size() > i)
+					{
+						if(ArrayList2.size() > j)
+						{
+							if(ArrayList1.get(i).frequency < ArrayList2.get(j).frequency)
+							{
+//								System.out.println(ArrayList2.get(j).document + " " +ArrayList2.get(j).frequency);
+								if(!topFiveString.contains(ArrayList2.get(j).document) )
+									topFiveString.add(ArrayList2.get(j).document);
+								j++;
+							}
+							else
+							{
+//								System.out.println(ArrayList1.get(i).document + " " +ArrayList1.get(i).frequency);
+								if(!topFiveString.contains(ArrayList1.get(i).document))
+									topFiveString.add(ArrayList1.get(i).document);
+								i++;
+							}
+						}
+						else
+						{
+//							System.out.println(ArrayList1.get(i).document +  " " +ArrayList1.get(i).frequency);
+							if(!topFiveString.contains(ArrayList1.get(i).document))
+								topFiveString.add(ArrayList1.get(i).document);
+							i++;
+						}
+					}
+					else
+					{
+						if(ArrayList2.size() > j)
+						{
+//							System.out.println(ArrayList2.get(j).document + " " + ArrayList2.get(j).frequency);
+							if(!topFiveString.contains(ArrayList2.get(j).document) )
+								topFiveString.add(ArrayList2.get(j).document);
+							j++;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+			}
+			else														//in 1 not in 2
+			{
+				for(int i = 0; i < ArrayList1.size() && i < 5; i++)
+					topFiveString.add( ArrayList1.get(i).document );
+			}
+		}
+		else
+		{
+			if(occKW2)													//in 2 not in 1
+			{
+				ArrayList2 = keywordsIndex.get(kw2);
+				
+				for(int i = 0; i < ArrayList2.size() && i < 5; i++)
+					topFiveString.add( ArrayList2.get(i).document );
+			}
+			else														//neither
+				return null;
+		}
+		return topFiveString;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
