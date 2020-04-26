@@ -378,17 +378,3 @@ public class LittleSearchEngine {
 		return topFiveString;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
