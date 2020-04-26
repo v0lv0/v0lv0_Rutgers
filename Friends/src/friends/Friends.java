@@ -1,8 +1,6 @@
 package friends;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import structures.Queue;
 import structures.Stack;
@@ -37,19 +35,18 @@ public class Friends {
 		while( !mainQueue.isEmpty() )
 		{
 			Person firstInQueue = mainQueue.dequeue();
-			stackIsGreat.push(firstInQueue);
 			
 			visitedNodes[g.map.get(firstInQueue.name)] = true;
 			Friend thisFriend = firstInQueue.first;
 			while( thisFriend != null )
 			{
-				if( !visitedNodes[thisFriend.fnum] )				
+				if( !visitedNodes[thisFriend.fnum] )						//check if visited
 				{
+					stackIsGreat.push(firstInQueue);
+					visitedNodes[thisFriend.fnum] = true;
 					if( g.members[thisFriend.fnum].name.equals(p2) )		//found it
-					{	
-						System.out.println("yuruika");
+					{
 						stackIsGreat.push( g.members[thisFriend.fnum] );
-						
 						while( !stackIsGreat.isEmpty() )
 						{
 							Person thisPerson = stackIsGreat.pop();
@@ -57,7 +54,6 @@ public class Friends {
 							
 							if( stackIsGreat.isEmpty() ) 
 							{
-								System.out.println("pls only print once");
 								returnList.add(g.members[thisFriend.fnum].name);
 								break;
 							}
@@ -76,19 +72,12 @@ public class Friends {
 						return returnList;
 					}
 					mainQueue.enqueue( g.members[ thisFriend.fnum ]);
-					visitedNodes[thisFriend.fnum] = true;
 				}
 				thisFriend = thisFriend.next;
 			}
 		}
-		
-		
-		
 		return null;
 	}
-	
-	
-	
 	
 	/**
 	 * Finds all cliques of students in a given school.
@@ -104,12 +93,7 @@ public class Friends {
 	public static ArrayList<ArrayList<String>> cliques(Graph g, String school) 
 	{
 		
-		/** COMPLETE THIS METHOD **/
-		
-		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY
-		// CHANGE AS REQUIRED FOR YOUR IMPLEMENTATION
 		return null;
-		
 	}
 	
 	/**
@@ -118,13 +102,9 @@ public class Friends {
 	 * @param g Graph for which connectors needs to be found.
 	 * @return Names of all connectors. Null or empty array list if there are no connectors.
 	 */
-	public static ArrayList<String> connectors(Graph g) {
+	public static ArrayList<String> connectors(Graph g) 
+	{
 		
-		/** COMPLETE THIS METHOD **/
-		
-		// FOLLOWING LINE IS A PLACEHOLDER TO MAKE COMPILER HAPPY
-		// CHANGE AS REQUIRED FOR YOUR IMPLEMENTATION
 		return null;
-		
 	}
 }

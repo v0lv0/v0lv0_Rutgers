@@ -15,7 +15,7 @@ public class Driver {
 		Graph g;
 		while (true) {
 			System.out.print("\nEnter the file: ");
-			String file = "sptest4.txt";
+			String file = "sptest1.txt";
 			if (file.length() != 0) {
 				g = new Graph(new Scanner(new File(file)));
 			} else {
