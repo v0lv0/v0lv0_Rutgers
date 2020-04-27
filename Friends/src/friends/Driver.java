@@ -15,14 +15,14 @@ public class Driver {
 		Graph g;
 		while (true) {
 			System.out.print("\nEnter the file: ");
-			String file = "sptest1.txt";
+			String file = sc.nextLine();
 			if (file.length() != 0) {
 				g = new Graph(new Scanner(new File(file)));
 			} else {
 				break;
 			}
 
-
+			String school = "";
 			System.out.println("Enter the number for corresponding method:");
 			System.out.println("1 shortestChain");
 			System.out.println("2 cliques");
@@ -39,7 +39,7 @@ public class Driver {
 				result = Friends.shortestChain(g, start, end);
 			}else if (method.equals("2")) {
 				System.out.println("Enter the school name");
-				String school = sc.nextLine();
+				school = sc.nextLine();
 				resultschool = Friends.cliques(g, school);
 			}else if (method.equals("3")) {
 				result = Friends.connectors(g);
@@ -49,7 +49,7 @@ public class Driver {
 				if (resultschool==null||resultschool.isEmpty()) {
 				System.out.print("not found");}
 				else {
-					System.out.println("Result (School):");
+					System.out.println("Result ("+school+"):");
 					for (int i = 0;i<resultschool.size();i++) {
 						ArrayList <String> temp = resultschool.get(i);
 						System.out.println("------");
