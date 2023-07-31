@@ -1,20 +1,3 @@
-# v0lv0_Rutgers
+Data Structure 
 
 :
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-^)
